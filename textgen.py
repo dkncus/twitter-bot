@@ -36,6 +36,7 @@ def histogram(source):
 	text = open(source, encoding="utf8")
 	line = text.readline()
 
+	individual_words = []
 	#for each line of the source text
 	while line:
 		#if there is a line here
@@ -53,35 +54,36 @@ def histogram(source):
 					histogram[word] += 1
 				else:
 					histogram[word] = 1
+				individual_words.append(word)
 		#read the next line
 		line = text.readline()
 
 		histogram = dict(OrderedDict(sorted(histogram.items(), key=lambda kv: kv[1], reverse = True)))
 	#Return the histogram as sorted
-	return histogram
+	return histogram, individual_words
 
 def gen_probabilities(histogram):
 	#Get data from the list where - words : Population, freq : Frequency of each word, total : Total number of words, probs = Probabilites of each occurance
 	words = list(histogram)
 	freqs = list(histogram.values())
 	total = sum(freqs)
-	probs = []
+	probs = {}
 
-	for freq in freqs:
-		probs.append(freq / total)
-
+	for word in histogram:
+		probs[word] = (histogram[word] / total)
 	return probs
 
 def random_word(hist, probs):
 	#Choose a random word with the weighting from probs[]
 	words = list(hist)
+	probs = list(probs)
 	word = random.choices(population=words, weights=probs)
 	return word[0]
 
 if __name__ == '__main__':
 	#words = GetDict('words.txt')
 	#print(PrintSentence(words, 5))
-	hist = histogram('holmes.txt')
+	hist, _ = histogram('holmes.txt')
 	probabilities = gen_probabilities(hist)
-	for i in range(50):
-		print(random_word(hist, probabilities))
+	for p in probabilities:
+		print(p, probabilities[p])
