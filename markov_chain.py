@@ -1,5 +1,5 @@
 import textgen
-
+import random
 class MarkovChain:
 	def __init__(self, corpus):
 		#Create a histogram of the most used words
@@ -30,3 +30,25 @@ class MarkovChain:
 				if next_word not in linked_words:
 					current_links.append([next_word, self.probabilities[next_word]])
 					self.markov_chain[current_word] = current_links
+
+	def walk(self, steps, starting_word):
+
+		#start the chain with the starting word
+		links = self.markov_chain[starting_word]
+		sentence = starting_word
+		steps -= 1
+
+		#for each word that needs to be found
+		for i in range(steps):
+			#file each word and probability of a given link into these 2 lists
+			words = []
+			probs = []
+			for link in links:
+				words.append(link[0])
+				probs.append(1)
+
+			chosen_word = random.choices(population=words, weights=probs)
+			print(chose)
+			sentence += " " + chosen_word[0]
+
+		return sentence
