@@ -2,48 +2,9 @@ import nltk
 from nltk import word_tokenize
 from nltk.chunk import conlltags2tree, tree2conlltags, ne_chunk
 
-import pprint
-
 import spacy
-from spacy import displacy
-
-from collections import Counter
-
 import en_core_web_sm
 nlp = en_core_web_sm.load()
-
-cities = []
-states = []
-countries = []
-
-#Initialize the locations
-def init_locations(cities_loc, states_loc, countries_loc):
-	cities_file = open(cities_loc)
-	states_file = open(states_loc)
-	countries_file = open(countries_loc)
-
-	#Initialize cities
-	line = cities_file.readline()
-	while line:
-		line = line.rstrip("\n")
-		cities.append(line)
-		line = cities_file.readline()
-
-	#Initialize states
-	line = states_file.readline()
-	while line:
-		line = line.rstrip("\n")
-		states.append(line)
-		line = states_file.readline()
-
-	#Initialize countries
-	line = countries_file.readline()
-	while line:
-		line = line.rstrip("\n")
-		countries.append(line)
-		line = countries_file.readline()
-
-	return 0
 
 #Generate POS tags for each headline, dependent on how many NNP's there are in the sentence
 def preprocess(fileloc):
@@ -63,16 +24,14 @@ def preprocess(fileloc):
 			tagged = nltk.pos_tag(word_tokenize(line))
 
 			#Check if the string is empty, if not, append to the list
-			if len(tagged) > 0 and tot_caps(line) < int(len(line.split()) * 0.7):
+			if tot_caps(line) < int(len(line.split()) * 0.7):
 				tagged_headlines.append(tagged)
 				originals.append(line)
 			
 			#Get the next line
 			line = headlines.readline()
-
-		except: #Cannot read characters from the file
+		except:
 			n = 0
-
 	return originals, tagged_headlines
 
 #Returns the number of capitalized words in a string
@@ -105,16 +64,41 @@ def create_trees(tagged_headlines):
 		ne_chunks.append(ne_chunk(hl))
 	return ne_chunk
 
+#Create SpaCY tags for NER, (e.g. NORP, ORG, MONEY, DATE, etc.)
+def gen_spacy_tags(untagged):
+	tagged_headlines = []
+	for hl in untagged:
+		doc = nlp(hl)
+		tagged_headlines.append(doc)
+
+	return tagged_headlines
+
 if __name__ == '__main__':
 	#Initialize location data (cities, states countries)
-	init_locations(r"datasets\cities.txt", r"datasets\states.txt", r"datasets\countries.txt")
+	print("Initializing location data")
+	init_locations(r"datasets\tag_replacements\gpe\gpe_cities.txt", r"datasets\tag_replacements\gpe\gpe_states.txt", r"datasets\tag_replacements\gpe\gpe_countries.txt")
+
+	fileloc_dataset = r"datasets\reference\non_clickbait_data.txt"
 
 	#Tag headlines from the dataset
-	untagged, tagged_headlines = preprocess(r"datasets\non_clickbait_data.txt")
+	print("Generating POS tags for dataset:", fileloc_dataset)
+	untagged, tagged_headlines = preprocess(fileloc_dataset)
 
-	processed_headlines = chunk('NP: {<DT>?<JJ>*<NN>}', tagged_headlines)
+	#Tag with proper NE recognition
+	print("Generating spaCy named entity recognition tags")
+	spacy_headlines = gen_spacy_tags(untagged)
 
-	ne_trees = create_trees(tagged_headlines)
+	for i, hl in enumerate(spacy_headlines):
+		#print(i, ":", hl)
+		rep_ents = []
+		return_string = str(hl.text)
+		for x in hl.ents:
+			#print('\t', x.text, x.label_)
+			rep_ents.append([x.text, x.label_])
+		for rep in rep_ents:
+			return_string = return_string.replace(str(rep[0]), str(rep[1]))
 
-	#Print the number of headlines tagged
+		print(return_string)
+		print()
+		
 	print("Number of Headlines:", len(tagged_headlines))

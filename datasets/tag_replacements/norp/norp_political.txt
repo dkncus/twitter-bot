@@ -1,0 +1,41 @@
+Politician
+Republican
+Democrat
+Communist
+Liberal
+Conservative
+GOP
+Independents
+Scientist
+Representative
+Senator
+Speaker
+House Speaker
+Dem
+Congressman
+Congresswoman
+Neo-Nazi
+Socialist
+Democratic
+Left-wing
+Right-wing
+Nationalist
+Capitalist
+Fascist
+Anarchist
+Marxist
+Populist
+Social Democrat
+Authoritarian
+Feminist
+Progressive
+Neoliberal
+Meadow Party member
+Ingsoc
+IRA
+ISIS
+Al-Qaeda
+ISIL
+Boko Haram fighters
+al-Shabbabist
+Islamic Jihad Union
