@@ -194,3 +194,6 @@ Vietnam
 Yemen
 Zambia
 Zimbabwe
+US
+UK
+EU
