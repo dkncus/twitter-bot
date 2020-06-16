@@ -7,13 +7,14 @@ nlp = en_core_web_sm.load()
 
 class Headline_Gen:
 	#Initialization function
-	def __init__(self, fileloc_dataset = r"datasets\reference\non_clickbait_data.txt"):
-		print("Generating POS tags for dataset:", fileloc_dataset)
+	def __init__(self, fileloc_dataset):
+		print("Generating POS tags for dataset:", fileloc_dataset, "...")
 		self.untagged, self.tagged_headlines = self.preprocess(fileloc_dataset)
 
 		#Tag with proper NE recognition
-		print("Generating spaCy named entity recognition tags")
+		print("Generating spaCy named entity recognition tags...")
 		self.spacy_headlines = self.gen_spacy_tags(self.untagged)
+		self.fillable_headlines = self.gen_fillable_headlines(self.spacy_headlines)
 
 	#Generate POS tags for each headline, dependent on how many NNP's there are in the sentence
 	def preprocess(self, fileloc):
@@ -83,21 +84,31 @@ class Headline_Gen:
 
 		return tagged_headlines
 
+	def gen_fillable_headlines(self, spacy_headlines):
+		#List of fillables to be returned
+		fillables = []
+
+		for i, hl in enumerate(spacy_headlines):
+			#Replacement Entities
+			rep_ents = []
+
+			#String that will be added to the list
+			return_string = str(hl.text)
+
+			#for each entity in the named entities in the headline
+			for x in hl.ents:
+				rep_ents.append([x.text, x.label_])
+
+			#replace each entitiy in the return list
+			for rep in rep_ents:
+				return_string = return_string.replace(str(rep[0]), str(rep[1]))
+
+			fillables.append(return_string)
+		
+		return fillables
+
 if __name__ == '__main__':
 	#Tag headlines from the dataset
 	h = Headline_Gen()
 
-	for i, hl in enumerate(h.spacy_headlines):
-		#print(i, ":", hl)
-		rep_ents = []
-		return_string = str(hl.text)
-		for x in hl.ents:
-			#print('\t', x.text, x.label_)
-			rep_ents.append([x.text, x.label_])
-		for rep in rep_ents:
-			return_string = return_string.replace(str(rep[0]), str(rep[1]))
-
-		print(return_string)
-		print()
-		
 	print("Number of Headlines:", len(h.tagged_headlines))

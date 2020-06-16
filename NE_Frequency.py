@@ -6,7 +6,7 @@ nlp = en_core_web_sm.load()
 
 class NE_Frequency:
 	#Types of spaCy tags
-	def __init__(self, tweet_data_loc = r'.\datasets\reference\tweets_1.txt', ):
+	def __init__(self, tweet_data_loc):
 		self.tag_types = [	'PERSON', 
 							'NORP', 
 							'FAC', 
@@ -26,18 +26,20 @@ class NE_Frequency:
 							'CARDINAL', 
 							'ORDINAL']
 		self.word_frequencies = {}
+		self.hash_freq = []
 		self.tweets = self.read_tweets(tweet_data_loc)
 		self.tokenized_tweets = self.tokenize_tweets(self.tweets)
 		self.frequency_map = self.get_entity_frequencies(self.tokenized_tweets)
 
+	#Read in the tweets to the tweet list
 	def read_tweets(self, fileloc):
 		tweets = []
 		file = open(fileloc)
 		line = file.readline()
+		hashtags = []
 
 		#Read each line and clean the data for the parser
 		while line:
-
 			#split the line into its individual words
 			words = line.split()
 			string = ""
@@ -47,10 +49,13 @@ class NE_Frequency:
 				#Clean lines for # and @ symbols, as well as hyperlinks
 				if not (('#' in word) or ('@' in word) or ('http:' in word) or ('https:' in word) or ('&' in word) or('www.' in word)):
 					string = string + word + ' '
+				elif '#' == word[0]:
+					hashtags.append(word)
 
 			tweets.append(string)
 			line = file.readline()
 
+		self.hash_freq = Counter(map(str.lower, hashtags)).most_common()
 		return tweets
 
 	#Break tweets into tokens and Named Entities and return
@@ -101,5 +106,5 @@ class NE_Frequency:
 
 if __name__ == '__main__':
 	NE = NE_Frequency()
-	NE.print_tokenized(NE.tokenized_tweets)
-	NE.print_freq_map(NE.frequency_map)
+	#NE.print_tokenized(NE.tokenized_tweets)
+	#NE.print_freq_map(NE.frequency_map)
