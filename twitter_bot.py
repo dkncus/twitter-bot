@@ -5,6 +5,12 @@ import random
 
 TAG_TYPES = ['PERSON', 'NORP', 'FAC', 'ORG', 'GPE', 'LOC', 'PRODUCT', 'EVENT', 'WORK_OF_ART', 'LAW', 'LANGUAGE', 'DATE', 'TIME', 'PERCENT', 'MONEY', 'QUANTITY', 'CARDINAL', 'ORDINAL']
 
+file = open('./access_keys/keys.txt')
+
+CONSUMER_KEY = file.readline().rstrip('\n')
+CONSUMER_SECRET = file.readline().rstrip('\n')
+ACCESS_TOKEN = file.readline().rstrip('\n')
+ACCESS_TOKEN_SECRET = file.readline().rstrip('\n')
 
 SITE_ADDRESS = "https://bit.ly/"
 
@@ -14,7 +20,7 @@ def fill_spaces(fillable):
 		if tag in fillable:
 			occurances = fillable.count(tag)
 			for i in range(occurances):
-				filled.replace(tag, <NEW>, 1)
+				filled.replace(tag, 1, 1)
 
 def load_data(location):
 	tmp = []
@@ -51,11 +57,11 @@ if __name__ == '__main__':
 	auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET) 
 
 	api = tweepy.API(auth)
-
+ 	print("Connection Successful!\n")
 	for i in range(10):
 		article_index = random.randint(0, len(headline_gen.fillable_headlines) - 1)
 		a = headline_gen.fillable_headlines[article_index]
 		print(a)
-		fill_spaces(a)
+		#fill_spaces(a)
 
 	#api.update_status()
