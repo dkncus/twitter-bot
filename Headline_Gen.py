@@ -80,7 +80,8 @@ class Headline_Gen:
 		tagged_headlines = []
 		for hl in untagged:
 			doc = nlp(hl)
-			tagged_headlines.append(doc)
+			if len(doc.ents) > 0:
+				tagged_headlines.append(doc)
 
 		return tagged_headlines
 
@@ -109,6 +110,9 @@ class Headline_Gen:
 
 if __name__ == '__main__':
 	#Tag headlines from the dataset
-	h = Headline_Gen()
+	h = Headline_Gen(r'datasets\reference\non_clickbait_data.txt')
 
-	print("Number of Headlines:", len(h.tagged_headlines))
+	for headline in h.fillable_headlines:
+		print(headline)
+
+	#print("Number of Headlines:", len(h.spacy_headlines))
