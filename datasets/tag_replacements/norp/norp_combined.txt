@@ -1,121 +1,50 @@
 Afghan
-Albanian
-Algerian
-Armenian
 Australian
-Austrian
-Bengali
-Belgian
-Bolivian
-Botswanan
 Brazilian 
-Bruneian
 Bulgarian
-Burmese
 Cambodian
 Canadian
 Central African
-Chilean
 Chinese
 Colombian
-Costa Rican
 Cuban
-Czech
-Danish
-Dominican
 Egyptian
-Salvadoran
-Eritrean
-Estonian
 Ethiopian
-Fijian
-Finnish
 French
-Gabonese
-Gambian
-Georgian
 German
 Greek
 Guatemalan
-Guinean
 Haitian
-Honduran
-Hungarian
 Icelandic
 Indian
-Indonesian
 Iranian
 Persian
 Iraqi
 Irish
 Israeli
 Italian
-Ivorian
-Jamaican
 Japanese
-Jordanian
-Kazakhstani
-Kenyan
 North Korean
 South Korean
-Kuwaiti
-Kyrgyzstani
-Latvian
-Lebanese
-Basotho
-Liberian
-Libyan
-Liechtensteiner
-Lithuanian
-Luxembourg
-Malaysian
 Mexican
-Mongolian
-Montenegrin
 Moroccan
-Mozambican
-Namibian
 Dutch
-New Zealand
-Nicaraguan
+New Zealander
 Nigerian
-Norwegian
 Pakistani
 Palestinian
-Paraguayan
-Peruvian
-Filipino
 Polish
-Portuguese
 Puerto Rican
-Qatari
-Romanian
 Russian
 Rwandan
-Saint Lucian
 Saudi
-Serbian
-Sierra Leonean
-Singaporean
-Slovak
-Slovenian
-Solomon Island
 Somali
 South African
-South Sudanese
 Spanish
 Sri Lankan
-Sudanese
-Surinamese
 Swedish
-Swiss
 Syrian
-Tajikistani
-Tanzanian
 Thai
-Turkish
-Turkmen
-Tuvaluan
 Ugandan
 Ukrainian
 UK
@@ -123,14 +52,8 @@ British
 United States
 U.S.
 American
-Uruguayan
-Uzbekistani
-Uzbek
-Vatican
 Venezuelan
 Vietnamese
-Zambian
-Zimbabwean
 Christian
 Islamic
 Muslim
@@ -148,18 +71,9 @@ Communist
 Liberal
 Conservative
 GOP
-Independents
-Scientist
-Representative
-Senator
-Speaker
-House Speaker
 Dem
-Congressman
-Congresswoman
 Neo-Nazi
 Socialist
-Democratic
 Left-wing
 Right-wing
 Nationalist
@@ -173,8 +87,6 @@ Authoritarian
 Feminist
 Progressive
 Neoliberal
-Meadow Party member
-Ingsoc
 IRA
 ISIS
 Al-Qaeda

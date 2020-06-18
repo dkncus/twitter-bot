@@ -30,7 +30,10 @@ class NE_Frequency:
 		self.tweets = self.read_tweets(tweet_data_loc)
 		self.tokenized_tweets = self.tokenize_tweets(self.tweets)
 		self.frequency_map = self.get_entity_frequencies(self.tokenized_tweets)
-
+		for s in self.frequency_map:
+			if self.frequency_map[s] == []:
+				self.frequency_map[s].append(('thing', 1))
+		
 	#Read in the tweets to the tweet list
 	def read_tweets(self, fileloc):
 		tweets = []
@@ -103,8 +106,3 @@ class NE_Frequency:
 			for entity in freq_map[category]:
 				print('\t', entity)
 			print()
-
-if __name__ == '__main__':
-	NE = NE_Frequency()
-	#NE.print_tokenized(NE.tokenized_tweets)
-	#NE.print_freq_map(NE.frequency_map)
