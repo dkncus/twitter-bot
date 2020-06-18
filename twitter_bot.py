@@ -2,10 +2,19 @@ import tweepy
 from NE_Frequency import NE_Frequency
 from Headline_Gen import Headline_Gen
 import random
+import selenium
+from selenium import webdriver
+import re
+import urllib.request
+import os, shutil
 
 TAG_TYPES = ['PERSON', 'NORP', 'FAC', 'ORG', 'GPE', 'LOC', 'PRODUCT', 'EVENT', 'WORK_OF_ART', 'LAW', 'LANGUAGE', 'DATE', 'TIME', 'PERCENT', 'MONEY', 'QUANTITY', 'CARDINAL', 'ORDINAL']
 
-accessfile = open('./access_keys/keys.txt')
+try:
+	accessfile = open('./access_keys/keys.txt')
+except:
+	print("No access keys available to be read.")
+
 CONSUMER_KEY = accessfile.readline().rstrip('\n')
 CONSUMER_SECRET = accessfile.readline().rstrip('\n')
 ACCESS_TOKEN = accessfile.readline().rstrip('\n')
@@ -13,6 +22,7 @@ ACCESS_TOKEN_SECRET = accessfile.readline().rstrip('\n')
 
 SITE_ADDRESSES = ["https://bit.ly/2YKAK5d", "https://bit.ly/3hFqkwg", "https://bit.ly/2UUvvij", "https://bit.ly/2ABojAT", "https://bit.ly/3eg9sKA"]
 
+headlines = []
 norps_common = []
 gpes_common = []
 cardinals_common = []
@@ -79,25 +89,7 @@ def load_data(location):
 
 	return tmp
 
-def generate_tweet():
-	body = fill_spaces(headlines[random.randint(0, len(headlines) - 1)], ne)
-	
-	header = headers_common[random.randint(0, len(headers_common) - 1)]
-
-	tweet = ""
-
-	if header == "":
-		tweet = body + ': ' + SITE_ADDRESSES[random.randint(0, 4)]
-	else:
-		tweet = header + " " + body + ': ' + SITE_ADDRESSES[random.randint(0, 4)]
-
-	return tweet
-
-if __name__ == '__main__':
-	#Stores the frequency of Named Entities
-	print("Initializing Named Entity Frequency Map...")
-	ne = NE_Frequency(tweet_data_loc = r'.\datasets\reference\tweets_1.txt')
-
+def init_datasets():
 	#Generates headlines with mad-lib-esque cut out Named Entities
 	print("Loading headlines for substitution...")
 	headlines = load_data(r'.\datasets\fillable_headlines.txt')
@@ -113,7 +105,25 @@ if __name__ == '__main__':
 	date_common = load_data('./datasets/tag_replacements/date/date.txt')
 	headers_common = load_data('./datasets/modifiers/header.txt')
 	print("Initialization Completed.\n")
+
+	return headlines, norps_common, gpes_common, cardinals_common, ordinals_common, orgs_common, money_common, date_common, headers_common
+
+def generate_tweet():
+	index = random.randint(0, len(headlines) - 1)
+	body = fill_spaces(headlines[index], ne)
 	
+	header = headers_common[random.randint(0, len(headers_common) - 1)]
+
+	tweet = ""
+
+	if header == "":
+		tweet = body + '\n\n' + SITE_ADDRESSES[random.randint(0, 4)]
+	else:
+		tweet = header + " " + body + '\n\n' + SITE_ADDRESSES[random.randint(0, 4)]
+
+	return body, tweet
+
+def authenticate():
 	#Create Twitter Authorization
 	print("Initiating Connection to Twitter API...")
 	auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -121,16 +131,98 @@ if __name__ == '__main__':
 	api = tweepy.API(auth)
 	print("Connection Successful!\n")
 
-	#api.update_status(status = generate_tweet())
+	return api
 
-	data = api.get_status(generate_tweet)
-	print(data)
-	#Delete ALL TWEETS from timeline
-	'''
+def delete_all(api):
 	for status in tweepy.Cursor(api.user_timeline).items():
-            try:
-                api.destroy_status(status.id)
-                print("Deleted:", status.id)
-            except:
-                print("Failed to delete:", status.id)
-    ''' 
+		try:
+			api.destroy_status(status.id)
+			print("Deleted:", status.id)
+		except:
+			print("Failed to delete:", status.id)
+
+	print("All tweets deleted.")
+
+def get_google_image(search_string):
+	words = search_string.split()
+	string = ""
+	for i, word in enumerate(words):
+		if i == len(words) - 1:
+			string += word.lower().rstrip(',')
+		else:
+			string += word.lower().rstrip(',') + '%20'
+
+	url_string = 'https://www.google.com/search?q=' + string + '&tbm=isch' + '&tbs=isz%3Am%2Csur%3Af'
+
+	print(url_string)
+
+	#Prep selenium options
+	options = selenium.webdriver.chrome.options.Options()
+	options.headless = True
+
+	#Open instance of chrome with Selenium, searching based on parameters
+	DRIVER_PATH = 'C:/bin/chromedriver.exe'
+	driver = webdriver.Chrome(options = options, executable_path=DRIVER_PATH)
+	driver.get(url_string)
+	lines = driver.page_source.splitlines()
+
+	#Harvest image links from search page
+	image_links = []
+	for line in lines:
+		if ('.jpg"' in line) and "</script>" not in line:
+			line = re.search(r"(?P<url>https?://[^\s]+)", line).group("url")
+			image_links.append(line[:(line.find('"'))])
+	driver.quit()
+
+	#download image
+	try:
+		if len(image_links) == 0:
+			print("No images found, using default image")
+			shutil.copy('./images/rep_img/default.jpg', "./images/image.jpg")
+		else:
+			urllib.request.urlretrieve(image_links[0], "./images/image.jpg")
+			print("URLlib request successful:", image_links[0])
+	except:
+		try:
+			urllib.request.urlretrieve(image_links[1], "./images/image.jpg")
+			print("URLlib request successful:", image_links[1])
+		except:
+			try:
+				urllib.request.urlretrieve(image_links[2], "./images/image.jpg")
+				print("URLlib request successful:", image_links[2])
+			except:
+				print("URLlib Request Failed, using default image")
+				shutil.copy('./images/rep_img/default.jpg', "./images/image.jpg")
+	
+#https://www.google.com/search?q=<SEARCH QUERY HERE>&tbm=isch&tbs=sur%3Af
+#https://www.google.com/search?		q=hello  &tbm=isch  &tbs=sur%3Af
+								#    Query	  image 	 lisencing 		
+if __name__ == '__main__':
+	#Stores the frequency of Named Entities
+	print("Initializing Named Entity Frequency Map...")
+	ne = NE_Frequency(tweet_data_loc = r'.\datasets\reference\tweets_1.txt')
+	
+	#Initialize datasets (e.g. headlines, norp_common, etc.)
+	headlines, norps_common, gpes_common, cardinals_common, ordinals_common, orgs_common, money_common, date_common, headers_common = init_datasets()
+
+	#Initiate connection to Twitter
+	api = authenticate()
+
+	for i in range(10):
+		#Generate actual tweet text
+		print("Generating tweet...")
+		body, tweet = generate_tweet()
+
+		#Generate related image
+		print("Getting image related to '", body, "'...")
+		get_google_image(body)
+		res = api.media_upload('./images/image.jpg')
+		media_id = [res.media_id]
+
+		#Post the actual tweet
+		print("Posting tweet...")
+		api.update_status(status = tweet, media_ids = media_id)
+		os.remove("./images/image.jpg")
+
+		print("Tweet posted:\n", tweet)
+		print()
