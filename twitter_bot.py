@@ -36,6 +36,8 @@ money_common = []
 date_common = []
 headers_common = []
 
+hashtags_common = ['#BREAKING', '#NEWS', '#BREAKINGNEWS']
+
 def fill_spaces(fillable, common_ne):
 	#print(fillable)
 
@@ -111,21 +113,6 @@ def init_datasets():
 	print("Initialization Completed.\n")
 
 	return headlines, norps_common, gpes_common, cardinals_common, ordinals_common, orgs_common, money_common, date_common, headers_common
-
-def generate_tweet():
-	index = random.randint(0, len(headlines) - 1)
-	body = fill_spaces(headlines[index], ne)
-	
-	header = headers_common[random.randint(0, len(headers_common) - 1)]
-
-	tweet = ""
-
-	if header == "":
-		tweet = body + '\n\n' + SITE_ADDRESSES[random.randint(0, 4)]
-	else:
-		tweet = header + " " + body + '\n\n' + '>> LINK <<' + SITE_ADDRESSES[random.randint(0, 4)]
-
-	return body, tweet
 
 def authenticate():
 	#Create Twitter Authorization
@@ -227,7 +214,7 @@ def get_tweets_from_trends(trends, api, num_tweets):
 			#Check if a mention occurs in the tweet, get all mentions if so
 			users = tweet.entities['user_mentions']
 			for user in users:
-				if name_mentions[user['screen_name']] != None:
+				if user['screen_name'] in name_mentions:
 					num_mentions = name_mentions[user['screen_name']][1] + 1
 					name_mentions[user['screen_name']] = [user['name'], num_mentions]
 				else:
@@ -235,8 +222,21 @@ def get_tweets_from_trends(trends, api, num_tweets):
 
 	return tweets_set, name_mentions
 
-def gen_ne_from_tweets():
-	return
+def generate_tweet():
+	index = random.randint(0, len(headlines) - 1)
+	body = fill_spaces(headlines[index], ne)
+	
+	header = headers_common[random.randint(0, len(headers_common) - 1)]
+
+	tweet = ""
+	hashtags = random.sample(hashtags_common, k=3)
+
+	if header == "":
+		tweet = body + '\n\n' + '>> ' + SITE_ADDRESSES[random.randint(0, 4)] + ' <<' + '\n' + hashtags[0] + " " + hashtags[1] + " " + hashtags[2]
+	else:
+		tweet = header + " " + body + '\n\n' + header.rstrip(":") + ' NOW >> ' + SITE_ADDRESSES[random.randint(0, 4)] + ' <<' + '\n' + hashtags[0] + " " + hashtags[1] + " " + hashtags[2]
+
+	return body, tweet
 
 if __name__ == '__main__':
 	#Initialize datasets (e.g. headlines, norp_common, etc.)
@@ -249,24 +249,26 @@ if __name__ == '__main__':
 	trends = get_trends(api, US_WOEID)
 
 	print("Getting tweets from list of current trending topics...")
-	tweets, mentions = get_tweets_from_trends(trends = trends, api = api, num_tweets = 5)
-
-	print("TRENDING TOPICS")
-	for topic in trends:
-		print('\t', topic)
-
-	print("MENTIONS")
-	for item in mentions:
-		print('\t', item)
+	tweets, mentions = get_tweets_from_trends(trends = trends[:20], api = api, num_tweets = 10)
 
 	tweets_text = []
 	for tweet in tweets:
 		tweets_text.append(tweet.full_text)
 
-	ne = NE_Frequency(tweet_data_loc = r'.\datasets\reference\tweets_1.txt')
+	print("TRENDING TOPICS")
+	for topic in trends:
+		print('\t', topic)
 
+	for topic in trends:
+		if '#' in topic:
+			hashtags_common.append(topic)
+
+	print("Generating named entity frequency map")
+	ne = NE_Frequency(plaintext_tweets = tweets_text)
+
+	ne.print_freq_map(threshold_value = 2)
 	
-	'''
+	#Post several tweets
 	for i in range(12):
 		#Generate actual tweet text
 		print("Generating tweet...")
@@ -280,9 +282,10 @@ if __name__ == '__main__':
 
 		#Post the actual tweet
 		print("Posting tweet...")
-		#api.update_status(status = tweet, media_ids = media_id)
+		api.update_status(status = tweet, media_ids = media_id)
+
+		#Reset the images
 		os.remove("./images/image.jpg")
 
 		print("Tweet posted:\n", tweet)
 		print()
-	'''

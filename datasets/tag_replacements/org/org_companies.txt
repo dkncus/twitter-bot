@@ -1,194 +1,90 @@
 Walmart
 Sinopec Group
-Royal Dutch Shell
+Shell
 China National Petroleum
 State Grid
 Saudi Aramco
 BP
-Exxon Mobil
+Exxon-Mobil
 Volkswagen
 Toyota Motor
 Apple
 Berkshire Hathaway
 Amazon
 UnitedHealth Group
-Samsung Electronics
-Glencore
+Samsung
 McKesson
-Daimler
-CVS Health
-Total
-China State Construction Engineering
-Trafigura Group
-Hon Hai Precision Industry
-EXOR Group
+CVS
 AT&T
-Industrial & Commercial Bank of China
 AmerisourceBergen
 Chevron
-Ping An Insurance
-Ford Motor
-China Construction Bank
-General Motors
+Ford
+GM
 Mitsubishi
-Honda Motor
-Costco Wholesale
-Agricultural Bank of China
-Alphabet
-Cardinal Health
-SAIC Motor
-Walgreens Boots Alliance
-JPMorgan Chase & Co.
-Gazprom
-Verizon Communications
-Bank of China
+Honda
+Costco
+Google
+Walgreens
+JPMorgan
+Chase Bank
+Verizon
 Allianz
-AXA
 Kroger
-General Electric
+GE
 Fannie Mae
-Lukoil
-China Life Insurance
-Japan Post Holdings
-BMW Group
-Phillips 66
-China Railway Engineering Group
-China Mobile Communications
-Valero Energy
-Bank of America Corp.
-China Railway Construction
+BMW
+Philips
+Bank of America
+BofA
 Microsoft
-Huawei Investment & Holding
+Huawei
 Home Depot
-China National Offshore Oil
-Nippon Telegraph & Telephone
-Itochu
-Nissan Motor
-China Development Bank
+Nissan
 Boeing
 Wells Fargo
 Siemens
-Citigroup
-Marathon Petroleum
-SK Holdings
-Petrobras
+Citi Bank
 Comcast
-NestlÃ©
-Bosch Group
-Uniper
+Nestle
 Anthem
-China Resources
-Carrefour
-Dongfeng Motor
-ENI
-Dell Technologies
-Banco Santander
-Rosneft Oil
-China FAW Group
-Sinochem Group
-Enel
-Deutsche Telekom
-Assicurazioni Generali
-China Communications Construction
-Hyundai Motor
-Pemex
-Peugeot
-Pacific Construction Group
-SoftBank Group
-HSBC Holdings
+Dell
+Hyundai
+HSBC
 DuPont
-China Post Group
 Hitachi
 Tesco
-BNP Paribas
-JXTG Holdings
-Reliance Industries
-China Energy Investment
-State Farm Insurance Cos.
+State Farm
 Johnson & Johnson
-China Southern Power Grid
-China Minmetals
-Equinor
-International Business Machines
+IBM
 BASF
 Sony
-Indian Oil
-AEON
-Amer International Group
-ArcelorMittal
-People's Insurance Co. of China
 Target
 Airbus
-Deutsche Post DHL Group
-Nippon Life Insurance
-Engie
-Royal Ahold Delhaize
-Freddie Mac
-Beijing Automotive Group
-PTT
+DHL
 Panasonic
-United Parcel Service
+UPS
 Lowe's
 COFCO
 Intel
 U.S. Postal Service
-CITIC Group
-China Evergrande Group
-JD.com
-China North Industries Group
-China Telecommunications
 MetLife
-Renault
-ChemChina
-Munich Re Group
 Procter & Gamble
-Marubeni
-United Technologies
-China Baowu Steel Group
-Bank of Communications
-Aviation Industry Corp. of China
 FedEx
-Dai-ichi Life Holdings
-PepsiCo
-Archer Daniels Midland
-Prudential Financial
+Pepsi
 Mitsui
-Petronas
-Seven & I Holdings
-Oil & Natural Gas
-PowerChina
-Toyota Tsusho
-Roche Group
-Auchan Holding
-Albertsons Cos.
-Mitsubishi UFJ Financial Group
+Seven & I
+Toyota
 Unilever
 Centene
-Sinopharm
 Walt Disney
-POSCO
 Sysco
 HP
-Pertamina
-Country Garden Holdings
-Tokyo Electric Power
 Humana
 Brookfield
-Hengli Group
 Alibaba
-RWE
 Facebook
 LG Electronics
 Nippon Steel Corporation
-Christian Dior
-China Merchants Bank
-Guangzhou Automobile Industry Group
 Caterpillar
-Anheuser-Busch InBev
-Korea Electric Power
-Energy Transfer
-Wesfarmers
 Lockheed Martin
-Pfizer
-China Pacific Insurance
 Repsol

@@ -2,11 +2,12 @@ from collections import Counter
 import string
 import spacy
 import en_core_web_sm
+import emoji
 nlp = en_core_web_sm.load()
 
 class NE_Frequency:
 	#Types of spaCy tags
-	def __init__(self, tweet_data_loc):
+	def __init__(self, plaintext_tweets):
 		self.tag_types = [	'PERSON', 
 							'NORP', 
 							'FAC', 
@@ -27,7 +28,7 @@ class NE_Frequency:
 							'ORDINAL']
 		self.word_frequencies = {}
 		self.hash_freq = []
-		self.tweets = self.read_tweets(tweet_data_loc)
+		self.tweets = plaintext_tweets
 		self.tokenized_tweets = self.tokenize_tweets(self.tweets)
 		self.frequency_map = self.get_entity_frequencies(self.tokenized_tweets)
 		for s in self.frequency_map:
@@ -35,31 +36,6 @@ class NE_Frequency:
 				self.frequency_map[s].append(('thing', 1))
 		
 	#Read in the tweets to the tweet list
-	def read_tweets(self, fileloc):
-		tweets = []
-		file = open(fileloc)
-		line = file.readline()
-		hashtags = []
-
-		#Read each line and clean the data for the parser
-		while line:
-			#split the line into its individual words
-			words = line.split()
-			string = ""
-
-			#For every word in those words
-			for word in words:
-				#Clean lines for # and @ symbols, as well as hyperlinks
-				if not (('#' in word) or ('@' in word) or ('http:' in word) or ('https:' in word) or ('&' in word) or('www.' in word)):
-					string = string + word + ' '
-				elif '#' == word[0]:
-					hashtags.append(word)
-
-			tweets.append(string)
-			line = file.readline()
-
-		self.hash_freq = Counter(map(str.lower, hashtags)).most_common()
-		return tweets
 
 	#Break tweets into tokens and Named Entities and return
 	def tokenize_tweets(self, tweets):
@@ -82,12 +58,25 @@ class NE_Frequency:
 		#Fill in the dictionary with each individual word recognized
 		for tweet in tokenized_tweets:
 			for entity in tweet.ents:
-				dictionary[entity.label_].append(entity.text)
+				dictionary[entity.label_].append(entity.text.rstrip(r'\'s'))
 
 		#If same object is recognized in multiple categories, remove it, keep in category it appears most frequently in
 		for category in dictionary:
 			freq_map = Counter(dictionary[category]).most_common()
 			dictionary[category] = freq_map
+
+		#Check dictionary entries for extraneous characters (#, links, emoji, etc.) and remove
+		for category in dictionary:
+			entity_list = []
+			for entity in dictionary[category]:
+				has_emoji = False
+				for character in entity[0]:
+					if character in emoji.UNICODE_EMOJI:
+						has_emoji = True
+				if '#' in entity[0] or 'http' in entity[0] or '@' in entity[0] or has_emoji:
+					entity_list.append(entity)
+			for entity in entity_list:
+				dictionary[category].remove(entity)
 
 		return dictionary
 
@@ -100,9 +89,10 @@ class NE_Frequency:
 			print()
 
 	#Print dictionary
-	def print_freq_map(self, freq_map):
-		for category in freq_map:
+	def print_freq_map(self, threshold_value):
+		for category in self.frequency_map:
 			print(category)
-			for entity in freq_map[category]:
-				print('\t', entity)
+			for entity in self.frequency_map[category]:
+				if entity[1] >= threshold_value:
+					print('\t', entity)
 			print()
