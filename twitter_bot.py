@@ -234,7 +234,7 @@ def generate_tweet():
 	if header == "":
 		tweet = body + '\n\n' + '>> ' + SITE_ADDRESSES[random.randint(0, 4)] + ' <<' + '\n' + hashtags[0] + " " + hashtags[1] + " " + hashtags[2]
 	else:
-		tweet = header + " " + body + '\n\n' + header.rstrip(":") + ' NOW >> ' + SITE_ADDRESSES[random.randint(0, 4)] + ' <<' + '\n' + hashtags[0] + " " + hashtags[1] + " " + hashtags[2]
+		tweet = header + " " + body + '\n\n >> ' + SITE_ADDRESSES[random.randint(0, 4)] + ' <<' + '\n' + hashtags[0] + " " + hashtags[1] + " " + hashtags[2]
 
 	return body, tweet
 
@@ -269,7 +269,7 @@ if __name__ == '__main__':
 	ne.print_freq_map(threshold_value = 2)
 	
 	#Post several tweets
-	for i in range(12):
+	for i in range(20):
 		#Generate actual tweet text
 		print("Generating tweet...")
 		body, tweet = generate_tweet()
