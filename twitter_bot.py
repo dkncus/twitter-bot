@@ -7,6 +7,7 @@ from selenium import webdriver
 import re
 import urllib.request
 import os, shutil
+import json
 
 TAG_TYPES = ['PERSON', 'NORP', 'FAC', 'ORG', 'GPE', 'LOC', 'PRODUCT', 'EVENT', 'WORK_OF_ART', 'LAW', 'LANGUAGE', 'DATE', 'TIME', 'PERCENT', 'MONEY', 'QUANTITY', 'CARDINAL', 'ORDINAL']
 
@@ -21,6 +22,9 @@ ACCESS_TOKEN = accessfile.readline().rstrip('\n')
 ACCESS_TOKEN_SECRET = accessfile.readline().rstrip('\n')
 
 SITE_ADDRESSES = ["https://bit.ly/2YKAK5d", "https://bit.ly/3hFqkwg", "https://bit.ly/2UUvvij", "https://bit.ly/2ABojAT", "https://bit.ly/3eg9sKA"]
+
+#Where-on-Earth ID number for the United States
+US_WOEID = 23424977
 
 headlines = []
 norps_common = []
@@ -119,7 +123,7 @@ def generate_tweet():
 	if header == "":
 		tweet = body + '\n\n' + SITE_ADDRESSES[random.randint(0, 4)]
 	else:
-		tweet = header + " " + body + '\n\n' + SITE_ADDRESSES[random.randint(0, 4)]
+		tweet = header + " " + body + '\n\n' + '>> LINK <<' + SITE_ADDRESSES[random.randint(0, 4)]
 
 	return body, tweet
 
@@ -144,6 +148,9 @@ def delete_all(api):
 	print("All tweets deleted.")
 
 def get_google_image(search_string):
+	#https://www.google.com/search?q=<SEARCH QUERY HERE>&tbm=isch&tbs=sur%3Af
+	#https://www.google.com/search?		q=hello  &tbm=isch  &tbs=sur%3Af
+									#    Query	  image 	 lisencing 	
 	words = search_string.split()
 	string = ""
 	for i, word in enumerate(words):
@@ -193,22 +200,74 @@ def get_google_image(search_string):
 			except:
 				print("URLlib Request Failed, using default image")
 				shutil.copy('./images/rep_img/default.jpg', "./images/image.jpg")
-	
-#https://www.google.com/search?q=<SEARCH QUERY HERE>&tbm=isch&tbs=sur%3Af
-#https://www.google.com/search?		q=hello  &tbm=isch  &tbs=sur%3Af
-								#    Query	  image 	 lisencing 		
+
+def get_trends(api, woeid):
+	string = api.trends_place(woeid)
+	trends = []
+	for trend in string[0]['trends']:
+		trends.append(trend['name'])
+
+	return trends
+
+def get_tweets_from_trends(trends, api, num_tweets):
+	name_mentions = {}
+
+	tweets_set = []
+
+	for query in trends:
+		#Filter out retweets if needed
+		query = query + ' -filter:retweets'
+
+		#Search for the tweets of a given trend
+		tweets = tweepy.Cursor(api.search, q = query, lang="en", tweet_mode='extended').items(num_tweets)
+
+		for tweet in tweets:
+			#tweet_text = tweet.full_text
+			tweets_set.append(tweet)
+			#Check if a mention occurs in the tweet, get all mentions if so
+			users = tweet.entities['user_mentions']
+			for user in users:
+				if name_mentions[user['screen_name']] != None:
+					num_mentions = name_mentions[user['screen_name']][1] + 1
+					name_mentions[user['screen_name']] = [user['name'], num_mentions]
+				else:
+					name_mentions[user['screen_name']] = [user['name'], 1]
+
+	return tweets_set, name_mentions
+
+def gen_ne_from_tweets():
+	return
+
 if __name__ == '__main__':
-	#Stores the frequency of Named Entities
-	print("Initializing Named Entity Frequency Map...")
-	ne = NE_Frequency(tweet_data_loc = r'.\datasets\reference\tweets_1.txt')
-	
 	#Initialize datasets (e.g. headlines, norp_common, etc.)
 	headlines, norps_common, gpes_common, cardinals_common, ordinals_common, orgs_common, money_common, date_common, headers_common = init_datasets()
 
 	#Initiate connection to Twitter
 	api = authenticate()
 
-	for i in range(10):
+	print("Getting current trend data...")
+	trends = get_trends(api, US_WOEID)
+
+	print("Getting tweets from list of current trending topics...")
+	tweets, mentions = get_tweets_from_trends(trends = trends, api = api, num_tweets = 5)
+
+	print("TRENDING TOPICS")
+	for topic in trends:
+		print('\t', topic)
+
+	print("MENTIONS")
+	for item in mentions:
+		print('\t', item)
+
+	tweets_text = []
+	for tweet in tweets:
+		tweets_text.append(tweet.full_text)
+
+	ne = NE_Frequency(tweet_data_loc = r'.\datasets\reference\tweets_1.txt')
+
+	
+	'''
+	for i in range(12):
 		#Generate actual tweet text
 		print("Generating tweet...")
 		body, tweet = generate_tweet()
@@ -221,8 +280,9 @@ if __name__ == '__main__':
 
 		#Post the actual tweet
 		print("Posting tweet...")
-		api.update_status(status = tweet, media_ids = media_id)
+		#api.update_status(status = tweet, media_ids = media_id)
 		os.remove("./images/image.jpg")
 
 		print("Tweet posted:\n", tweet)
 		print()
+	'''
