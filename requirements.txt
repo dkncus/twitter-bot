@@ -1,8 +1,17 @@
 flask
 tweepy
-gunicorn
 spacy
 collections
 string
 spacy download en_core_web_sm
 nltk
+random
+selenium
+re
+urllib
+os
+shutil
+math
+threading
+string
+emoji

@@ -77,7 +77,6 @@ class NE_Frequency:
 					entity_list.append(entity)
 			for entity in entity_list:
 				dictionary[category].remove(entity)
-
 		return dictionary
 
 	#Print out the given tokenized tweets
